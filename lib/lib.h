@@ -9,12 +9,12 @@ using ip_address = std::array<ip_byte, 4>;
 using ip_list = std::vector<ip_address>;
 using ip_list_ci = ip_list::const_iterator;
 
-void input_ip_list(ip_list& ip_pool);
+void input_ip_list(std::istream& ostream, ip_list& ip_pool);
 std::ostream& operator<<(std::ostream& ostream, const ip_address& ipAddress);
 std::ostream& operator<<(std::ostream& ostream, const ip_list& ipList);
 
 template<typename ...Args>
-void filter_template_func(const ip_list& ipList, const ip_byte& ipByte, Args&&... ip_bytes) {
+void filter_template_func(std::ostream& ostream, const ip_list& ipList, const ip_byte& ipByte, Args&&... ip_bytes) {
     auto ipAddress = ip_address{ ipByte, (ip_byte)ip_bytes... };
 
     auto interval = std::make_pair(ipList.cbegin(), ipList.end());
@@ -27,7 +27,7 @@ void filter_template_func(const ip_list& ipList, const ip_byte& ipByte, Args&&..
         );
     }
 
-    std::cout << ip_list(interval.first, interval.second);
+    ostream << ip_list(interval.first, interval.second);
 }
 
-void filter_any_ip_impl(const ip_list &ip_pool, const ip_byte ipByte);
+void filter_any_ip_impl(std::ostream& ostream, const ip_list &ip_pool, const ip_byte ipByte);

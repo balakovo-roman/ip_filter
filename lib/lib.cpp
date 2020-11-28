@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
+#include <iterator>
 
 ip_address get_ip(std::string& str)
 {
@@ -14,9 +15,9 @@ ip_address get_ip(std::string& str)
     return temp;
 }
 
-void input_ip_list(ip_list& ip_pool) {
+void input_ip_list(std::istream& istream, ip_list& ip_pool) {
     //TODO: add parser ip address and checks it 
-    for (std::string line; std::getline(std::cin, line);) {
+    for (std::string line; std::getline(istream, line);) {
         ip_pool.emplace_back(get_ip(line));
     }
 }
@@ -32,14 +33,14 @@ std::ostream& operator<<(std::ostream& ostream, const ip_address& ipAddress) {
 
 std::ostream& operator<<(std::ostream& ostream, const ip_list& ipList) {
     for (const auto& address : ipList)
-        ostream << address << std::endl;
+        ostream << address << "\n";
     return ostream;
 }
 
-void filter_any_ip_impl(const ip_list& ip_pool, const ip_byte anyIpByte) {
+void filter_any_ip_impl(std::ostream& ostream, const ip_list& ip_pool, const ip_byte anyIpByte) {
     for (const auto& ipAddress : ip_pool) {
         if (std::any_of(ipAddress.cbegin(), ipAddress.cend(), [anyIpByte](const ip_byte ipByte) {return anyIpByte == ipByte; })) {
-            std::cout << ipAddress << std::endl;
+            ostream << ipAddress << "\n";
         }
     }
 }
