@@ -9,6 +9,7 @@ using ip_address = std::array<ip_byte, 4>;
 using ip_list = std::vector<ip_address>;
 using ip_list_ci = ip_list::const_iterator;
 
+bool is_line_contains_ip(const std::string& line);
 void input_ip_list(std::istream& ostream, ip_list& ip_pool);
 std::ostream& operator<<(std::ostream& ostream, const ip_address& ipAddress);
 std::ostream& operator<<(std::ostream& ostream, const ip_list& ipList);

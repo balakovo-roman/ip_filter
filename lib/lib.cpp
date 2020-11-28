@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <iterator>
+#include <regex>
 
 ip_address get_ip(std::string& str)
 {
@@ -15,10 +15,17 @@ ip_address get_ip(std::string& str)
     return temp;
 }
 
+bool is_line_contains_ip(const std::string& line) {
+    std::regex regex("((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\\.){3}(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])");
+    return std::regex_match(line.substr(0, line.find_first_of(" \t")), regex);
+}
+
 void input_ip_list(std::istream& istream, ip_list& ip_pool) {
     //TODO: add parser ip address and checks it 
     for (std::string line; std::getline(istream, line);) {
-        ip_pool.emplace_back(get_ip(line));
+        if (is_line_contains_ip(line)) {
+            ip_pool.emplace_back(get_ip(line));
+        }
     }
 }
 
