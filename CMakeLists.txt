@@ -1,7 +1,7 @@
 ﻿# CMakeList.txt : CMake project for ip_filter, include source and define
 # project specific logic here.
 #
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.16)
 
 project(ip_filter)
 
@@ -10,29 +10,17 @@ if (MSVC)
     add_compile_options(/W4 /WX)
 else ()
     # lots of warnings and all warnings as errors
-    add_compile_options(-Wall -Wextra -Wpedantic)
+    add_compile_options(-Wall -Wextra -Wpedantic -Werror)
 endif ()
 
-
-add_subdirectory(lib)
+add_subdirectory(ipv4)
+add_subdirectory(tests)
 
 add_executable(ip_filter ip_filter.cpp)
-target_link_libraries(ip_filter lib)
-set_target_properties(ip_filter lib PROPERTIES
+target_include_directories(ip_filter PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/ipv4)
+target_link_libraries(ip_filter ipv4)
+set_target_properties(
+        ip_filter ipv4 PROPERTIES
         CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
-        )
-
-# tests
-#add_executable(tests tests.cpp)
-#find_package(Boost COMPONENTS unit_test_framework REQUIRED)
-#set_target_properties(tests PROPERTIES
-#        INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIRS}
-#        CXX_STANDARD 17
-#        CXX_STANDARD_REQUIRED ON
-#        )
-#target_link_libraries(tests lib ${Boost_LIBRARIES})
-#
-#enable_testing()
-#add_test(ip_filter_tests tests)
-
+)
