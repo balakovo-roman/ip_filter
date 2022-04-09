@@ -1,6 +1,4 @@
-﻿#include <sstream>
-#include <iostream>
-#include "ipv4.h"
+﻿#include "ipv4.h"
 
 using namespace ipv4;
 

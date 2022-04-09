@@ -28,4 +28,3 @@ std::istream &operator>>(std::istream &is, Ipv4 &ipv_4) {
 }
 
 }
-
