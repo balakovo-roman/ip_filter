@@ -1,6 +1,5 @@
 #include "ipv4.h"
 
-#include <iostream>
 #include <sstream>
 
 namespace ipv4 {
@@ -16,12 +15,11 @@ std::ostream &operator<<(std::ostream &os, const Ipv4 &ipv_4) {
 			<< static_cast<int>(ipv_4.data_[2]) << '.' << static_cast<int>(ipv_4.data_[3]);
 }
 std::istream &operator>>(std::istream &is, Ipv4 &ipv_4) {
-  char d1, d2, d3;
-  int b1, b2, b3, b4;
+  char d1{}, d2{}, d3{};
+  int b1{}, b2{}, b3{}, b4{};
 
-  is >> b1 >> d1 >> b2 >> d2 >> b3 >> d3 >> b4;
-
-  if (d1 == '.' && d2 == '.' && d3 == '.')
+  if (bool ok{is >> b1 >> d1 >> b2 >> d2 >> b3 >> d3 >> b4};
+	  ok && d1 == '.' && d2 == '.' && d3 == '.')
 	ipv_4 = Ipv4(b1, b2, b3, b4);
   else
 	is.setstate(std::ios_base::failbit);
