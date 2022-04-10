@@ -36,37 +36,56 @@ TEST(ip_filter, read_ip_list_wrong_ip) {
   ASSERT_EQ(ip_list, result);
 }
 
-TEST(ip_filter, filtering) {
-  std::fstream file("ip_filter.tsv", std::fstream::in);
-  IpList ip_list = ReadIpList(file);
-  file.close();
+struct IpFilterFixture : public testing::Test {
+  std::ifstream input_file;
+  std::fstream test_file;
+  std::ifstream right_result_file;
 
-  file.open("test_file.tst", std::fstream::out);
-  if (!file.is_open()) {
-	exit(1);
+  static void SetUpTestSuite() {
+	std::cout << "SetUpTestSuite"s << std::endl;
   }
+
+  static void TearDownTestSuite() {
+	std::cout << "TearDownTestSuite"s << std::endl;
+  }
+
+  void SetUp() override {
+	input_file.open("ip_filter.tsv", std::fstream::in);
+	test_file.open("test_file.tst", std::fstream::trunc | std::fstream::in | std::fstream::out);
+	right_result_file.open("ip_filter.tst", std::fstream::in);
+  }
+
+  void TearDown() override {
+	input_file.close();
+	test_file.close();
+	right_result_file.close();
+  }
+};
+
+TEST_F(IpFilterFixture, filtering) {
+  // Arrange
+  IpList ip_list = ReadIpList(input_file);
+
+  // Act
   std::sort(ip_list.begin(), ip_list.end(), std::greater<>{});
-  file << ip_list;
+  test_file << ip_list;
 
-  FilterTemplateFunc(file, ip_list, 1);
-  FilterTemplateFunc(file, ip_list, 46, 70);
-  FilterAnyIpImpl(file, ip_list, 46);
-  file.close();
+  FilterTemplateFunc(test_file, ip_list, 1);
+  FilterTemplateFunc(test_file, ip_list, 46, 70);
+  FilterAnyIpImpl(test_file, ip_list, 46);
+  test_file.seekg(0);
 
-  file.open("test_file.tst", std::fstream::in);
-  std::string test_file;
-  for (std::string line; std::getline(file, line);)
-	test_file += line;
-  file.close();
+  // Assert
+  std::string test_result;
+  for (std::string line; std::getline(test_file, line);)
+	test_result.append(line);
 
-  file.open("ip_filter.tst", std::fstream::in);
-  std::string ref_file;
-  for (std::string line; std::getline(file, line);) {
-	ref_file += line;
+  std::string right_result;
+  for (std::string line; std::getline(right_result_file, line);) {
+	right_result.append(line);
   }
-  file.close();
 
-  ASSERT_EQ(std::hash<std::string>{}(test_file), std::hash<std::string>{}(ref_file));
+  ASSERT_EQ(std::hash<std::string>{}(test_result), std::hash<std::string>{}(right_result));
 }
 
 #endif //IP_FILTER_TESTS_FILTER_TEST_H_
