@@ -17,11 +17,8 @@ class Ipv4 {
 			static_cast<IpByte>((ip >> 8) & 0xFF),
 			static_cast<IpByte>(ip & 0xFF)} {}
 
-  constexpr Ipv4(const Ipv4 &other) noexcept : data_{other.data_} {}
-  constexpr Ipv4 &operator=(const Ipv4 &other) noexcept {
-	data_ = other.data_;
-	return *this;
-  }
+  constexpr Ipv4(const Ipv4 &other) noexcept = default;
+  constexpr Ipv4 &operator=(const Ipv4 &other) noexcept = default;
 
   std::string to_string() const;
   constexpr unsigned long to_ulong() const noexcept {
