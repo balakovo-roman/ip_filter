@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
+#include <vector>
 
 namespace ipv4 {
 
@@ -90,5 +92,29 @@ class Ipv4 {
 
   std::array<IpByte, 4> data_;
 };
+
+using IpList = std::vector<Ipv4>;
+
+IpList ReadIpList(std::istream &istream);
+std::ostream &operator<<(std::ostream &ostream, const IpList &ip_list);
+
+template<typename ...Args>
+void FilterTemplateFunc(std::ostream &ostream, const IpList &ip_list, const Ipv4::IpByte &ip_byte, Args &&... ip_bytes) {
+  auto ipv_4 = Ipv4{ip_byte, static_cast<Ipv4::IpByte>(ip_bytes)...};
+
+  auto [begin, end] = std::make_pair(ip_list.cbegin(), ip_list.end());
+
+  for (size_t cnt = 0; cnt < (1 + sizeof...(ip_bytes)); ++cnt) {
+	std::tie(begin, end) = std::equal_range(begin, end, ipv_4,
+											[cnt](const Ipv4 &lhs, const Ipv4 &rhs) {
+											  return lhs[cnt] > rhs[cnt];
+											}
+	);
+  }
+
+  ostream << IpList(begin, end);
+}
+
+void FilterAnyIpImpl(std::ostream &os, const IpList &ip_list, Ipv4::IpByte ip_byte);
 
 }

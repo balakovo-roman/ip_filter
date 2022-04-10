@@ -60,4 +60,40 @@ std::istream &operator>>(std::istream &is, Ipv4 &ipv_4) {
   return is;
 }
 
+IpList ReadIpList(std::istream &is) {
+  IpList ip_list;
+
+  while (!is.eof() && !is.bad())
+  {
+	Ipv4 ip;
+	is >> ip;
+
+	if (is.fail()) {
+	  is.clear();
+	  is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	} else {
+	  ip_list.emplace_back(ip);
+	}
+  }
+
+  return ip_list;
+}
+
+std::ostream &operator<<(std::ostream &os, const IpList &ip_list) {
+  for (const auto &ip : ip_list)
+	os << ip << '\n';
+
+  return os;
+}
+
+void FilterAnyIpImpl(std::ostream &os, const IpList &ip_list, Ipv4::IpByte any_ip_byte) {
+  for (const auto &ip : ip_list) {
+	if (std::any_of(std::cbegin(ip),
+					std::cend(ip),
+					[any_ip_byte](const Ipv4::IpByte ip_byte) { return any_ip_byte == ip_byte; })) {
+	  os << ip << '\n';
+	}
+  }
+}
+
 }
