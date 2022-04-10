@@ -15,11 +15,44 @@ std::ostream &operator<<(std::ostream &os, const Ipv4 &ipv_4) {
 			<< static_cast<int>(ipv_4.data_[2]) << '.' << static_cast<int>(ipv_4.data_[3]);
 }
 std::istream &operator>>(std::istream &is, Ipv4 &ipv_4) {
-  char d1{}, d2{}, d3{};
-  int b1{}, b2{}, b3{}, b4{};
+  int b1{};
+  if (!(is >> b1)) {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
 
-  if (bool ok{is >> b1 >> d1 >> b2 >> d2 >> b3 >> d3 >> b4};
-	  ok && d1 == '.' && d2 == '.' && d3 == '.')
+  if (is.peek() != '.') {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
+  is.ignore(1);
+
+  int b2{};
+  if (!(is >> b2)) {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
+
+  if (is.peek() != '.') {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
+  is.ignore(1);
+
+  int b3{};
+  if (!(is >> b3)) {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
+
+  if (is.peek() != '.') {
+	is.setstate(std::ios_base::failbit);
+	return is;
+  }
+  is.ignore(1);
+
+  int b4{};
+  if (is >> b4)
 	ipv_4 = Ipv4(b1, b2, b3, b4);
   else
 	is.setstate(std::ios_base::failbit);
