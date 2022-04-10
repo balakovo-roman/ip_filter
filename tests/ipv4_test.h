@@ -12,18 +12,16 @@ TEST(ipv4, construct) {
   // Arrange
   Ipv4 ip_default;
   Ipv4 ip{192, 168, 0, 1};
-  Ipv4 local_host{2130706433};
   Ipv4 ip_copy_op;
 
   // Act
   Ipv4 ip_copy = ip;
-  ip_copy_op = local_host;
+  ip_copy_op = ip;
 
   // Assert
   ASSERT_EQ(ip_default, Ipv4(0,0,0,0));
   ASSERT_EQ(ip_copy, Ipv4(192,168,0,1));
-  ASSERT_EQ(local_host, Ipv4(127,0,0,1));
-  ASSERT_EQ(ip_copy_op, Ipv4(127,0,0,1));
+  ASSERT_EQ(ip_copy_op, Ipv4(192,168,0,1));
 }
 
 TEST(ipv4, write_to_stream) {
@@ -136,5 +134,58 @@ TEST(ipv4, compare)
   ASSERT_EQ(ip > ip2, true);
   ASSERT_EQ(ip > ip3, false);
 }
+
+TEST(ipv4, index_operator)
+{
+  // Arrange
+  Ipv4 ip{192,168,1,1};
+
+  // Assert
+  ASSERT_EQ(ip[0], 192);
+  ASSERT_EQ(ip[1], 168);
+  ASSERT_EQ(ip[2], 1);
+  ASSERT_EQ(ip[3], 1);
+}
+
+TEST(ipv4, const_for_loop)
+{
+  // Arrange
+  Ipv4 ip{192,168,1,1};
+  std::vector<Ipv4::IpByte> result{192, 168, 1, 1};
+  std::vector<Ipv4::IpByte> output;
+
+  // Act
+  for (const auto ip_byte : ip)
+	output.emplace_back(ip_byte);
+
+  // Assert
+  ASSERT_EQ(output, result);
+}
+
+TEST(ipv4, changed_for_loop)
+{
+  // Arrange
+  Ipv4 ip{192,168,1,1};
+
+  // Act
+  for (auto &ip_byte : ip)
+	ip_byte = 255;
+
+  // Assert
+  ASSERT_EQ(ip, Ipv4(255,255,255,255));
+}
+
+TEST(ipv4, compile_time)
+{
+  // Arrange
+  constexpr Ipv4 ip{192,168,1,1};
+  constexpr Ipv4 ip2{192,168,2,1};
+
+  // Assert
+  static_assert(ip < ip2);
+  static_assert(ip[1] == 168);
+  static_assert(*(ip2.begin() + 2) == 2);
+}
+
 
 #endif //IP_FILTER_TESTS_IPV4_TEST_H_
