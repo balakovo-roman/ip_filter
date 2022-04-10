@@ -15,9 +15,27 @@ class Ipv4 {
   constexpr Ipv4 &operator=(const Ipv4 &other) noexcept = default;
 
   std::string to_string() const;
-  constexpr unsigned long to_ulong() const noexcept {
-	return (static_cast<unsigned long>(data_[0]) << 24) | (static_cast<unsigned long>(data_[1]) << 16) |
-		(static_cast<unsigned long>(data_[2]) << 8) | static_cast<unsigned long>(data_[3]);
+
+  constexpr auto begin() const noexcept {
+	return data_.cbegin();
+  }
+  constexpr auto begin() noexcept {
+	return data_.begin();
+  }
+
+  constexpr auto end() const noexcept {
+	return data_.cend();
+  }
+  constexpr auto end() noexcept {
+	return data_.end();
+  }
+
+  constexpr const IpByte &operator[](int n) const noexcept {
+	return data_[n];
+  }
+
+  IpByte &operator[](int n) noexcept {
+	return data_[n];
   }
 
   Ipv4 &operator++() {
